@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tweet Details</title>
+</head>
+<body>
+<h3>Total Tweets Fetched: {{ num_tweets}}</h3>
+<br>
+<h4>Sample Tweets:</h4><br>
+<table>
+ <thead>
+    <th>ID</th>
+    <th>Location</th>
+ <th>Tweet</th>
+  </thead>
+<tbody>
+{% for row_index in range(tweet_data[0]|count) %}
+    <tr>
+        <td>{{ tweet_data[0][row_index]}}</td>
+        <td>{{ tweet_data[1][row_index] }}</td>
+        <td>{{ tweet_data[2][row_index] }}</td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+<form action = "http://localhost:5001/" method = "get">
+
+      <button type="submit">Home</button>
+    </form>
+
+  <form action = "http://localhost:5001/wc" method = "get">
+
+      <button type="submit">WordCloud</button>
+    </form>
+
+</body>
+</html>

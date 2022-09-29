@@ -1,0 +1,27 @@
+<html>
+  <head>
+
+  </head>
+  <body>
+
+<h3>UK</h3>
+    <img src="{{bow_uk}}">
+    <h3>AUS</h3>
+     <img src="{{bow_aus}}">
+    <h3>USA</h3>
+     <img src="{{bow_usa}}">
+<!--why is a random word coming here.-->
+{% for table in tables %}
+            {{titles[loop.index]}}
+            {{ table|safe }}
+{% endfor %}
+
+
+  <form action = "http://localhost:5001/" method = "get">
+
+      <button type="submit">Home</button>
+    </form>
+
+  </body>
+
+</html>

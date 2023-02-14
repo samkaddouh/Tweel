@@ -1,8 +1,15 @@
-from flask import Flask, url_for, render_template, request
+from flask import Flask, url_for, render_template, request, redirect
 import tweepy as tw
 from sentiment import *
 import json
+import ranking
+import testing
+import modeling
+import pickle
 app = Flask(__name__)
+
+
+#source activate flaskapp - to start in terminal 
 
 #Authenticate to Twitter
 with open('tokens.secret') as f:
@@ -22,15 +29,92 @@ try:
 except:
     print("Error during authentication")
 
+
+
+
+
+ranking.populate_locs_for_trends(api)
+#print("Creating modeller")
+modeller = modeling.Modeller('Cleaned_dataset.csv', use_pickle=True)
+#print("Modeller Created")
+
+
+
+@app.route('/index', methods=['GET'])
+def home():
+    return render_template('index.html')
+
 # @app.route('/', methods =['GET'])
 # def hello_world():  # put application's code here
 #     # print("Sam")
 #     # return '<h1>About</h1'
 #     return render_template('main.html')
-@app.route('/', methods =['GET','POST'])
+
+@app.route('/', methods=['GET', 'POST'])
+def login():
+    error= None
+    if request.method == 'POST':
+        if request.form['username'] != 's' or request.form['password'] != 's':
+            error = "Invalid Credentials. Please try again."
+        else:
+            return redirect(url_for('home'))
+    return render_template('login.html', error=error)
+
+
+
+
+@app.route('/rs', methods=['GET','POST'])
+def ranking_endpoint():
+    countries_list = ranking.countries_drop_down(api)
+    if request.method == 'GET':
+        show_table = True
+   
+        return render_template('ranking_system.html', trends1=countries_list, show_table=False)
+    elif request.method == 'POST':
+        #print(request.form)
+        country = request.form['countries']
+        #select = request.form.get('countries')
+        #print("in select " + select)
+        string = country+"'s Top Trending Topics"
+        
+       
+        trends = ranking.get_trends(api, country)
+        #print(country)
+        hashtags, nonhashtags = ranking.extract_hashtags(trends[:5])
+        hash_df = ranking.analyse_topics(api, hashtags, modeller, 'hash', country)
+        nonhash_df = ranking.analyse_topics(api, nonhashtags, modeller, 'nonhash', country)
+        #api.analyse_topics = ranking.handle_post_error(ranking.analyse_topics)
+        df1 = ranking.handling_sentiment(hash_df)
+        df2 = ranking.handling_sentiment(nonhash_df)
+        #print(df1)
+        #print(df2)
+        list1 = df1.values.tolist()
+        list2 = df2.values.tolist()
+
+
+        #print(list1)
+        #print(list2)
+        return render_template('ranking_system.html', string=string, hash=hashtags, nonhash=nonhashtags, list1 = list1 , list2 = list2 ,trends1=countries_list, show_table=True)
+
+
+
+@app.route('/pf', methods=['GET','POST'])
+def feedback_endpoint():
+    usernames = ['vp', 'kingjames', 'elonmusk']
+    if request.method == 'GET':
+        
+        return render_template('feedback.html', usernames=usernames)
+    elif request.method == 'POST':
+        username = request.form['username']
+        tweets = testing.search_user_tweets(api, username)
+        return render_template('feedback.html', tweets=tweets, usernames=usernames)
+
+
+
+@app.route('/sa', methods=['GET','POST'])
 def get_data():
     if request.method == 'GET':
-        return render_template('main.html')
+        return render_template('sentiment_analysis.html')
     elif request.method == 'POST':
         keyword = request.form['search']
         keyword=keyword.strip().lower()

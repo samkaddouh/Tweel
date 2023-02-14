@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+</head>
+<body>
+
+
+
+<form action="http://localhost:5001/pf" method="POST">
+	
+
+  <label for="country">Choose a username:</label>
+ 
+
+<select name="username">
+        {% for username in usernames %}
+        <option value="{{ username }}">{{ username }}</option>
+        {% endfor %}
+</select>
+<input type="submit" value="Submit">
+
+{% for tweet in tweets %}
+<p>{{ tweet }}</p>
+{% endfor %}
+
+
+
+
+
+
+  
+</form>
+
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+</head>
+<body>
+
+
+
+<form action="http://localhost:5001/rs" method="POST">
+	
+
+  <label for="country">Choose a country/city:</label>
+ 
+
+<select name="countries">
+{% for key, value in trends1.items() %}
+    <optgroup label="{{ key }}">
+        {% for city in value %}
+            <option value="{{ city }}">{{ city }}</option>
+        {% endfor %}
+    </optgroup>
+{% endfor %}
+</select>
+<input type="submit" value="Submit">
+
+
+<h1>{{ string }}</h1>
+
+
+<ul> 
+{% for topic in hash %} 
+  <li>{{ topic }}</li> 
+{% endfor %} 
+</ul> 
+
+
+<ul> 
+{% for topic in nonhash %} 
+  <li>{{ topic }}</li> 
+{% endfor %} 
+</ul> 
+  <br><br>
+
+
+
+{%if show_table%}
+
+<table>
+    <thead>
+        <tr>
+            <th>Hashtag</th>
+            <th>Percentage Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ls1 in list1 %}
+        <tr>
+            <td>{{ ls1[0] }}</td>
+            <td>{{ ls1[1] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Topic</th>
+            <th>Percentage Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ls2 in list2 %}
+        <tr>
+            <td>{{ ls2[0] }}</td>
+            <td>{{ ls2[1] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+{%endif%}
+
+  
+</form>
+
+
+</body>
+</html>
